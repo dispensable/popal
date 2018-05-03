@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="cases">
+        <item>sun raise</item>
+        <item>flower and river </item>
+        <item>water and lake</item>
+    </string-array>
+</resources>
