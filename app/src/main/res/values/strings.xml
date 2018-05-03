@@ -1,5 +1,14 @@
 <resources>
     <string name="app_name">popal</string>
-    <string name="edit_message">Enter a mesage</string>
-    <string name="button_send">Send</string>
+    <string name="edit_message">Enter the case number</string>
+    <string name="button_send">SHOW ME WHAT YOU CAN</string>
+
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="button_add">+</string>
+    <string name="title_activity_scenes">ScenesActivity</string>
+    <string name="step1">add scenes</string>
+    <string name="step_1">step1: add all the gif source to app</string>
+    <string name="step_2">step2: set action to this gif when sensor condition satisfied</string>
 </resources>
