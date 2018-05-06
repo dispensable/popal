@@ -44,4 +44,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ScenesActivity.class);
         startActivity(intent);
     }
+
+    public void searchBluetooth(View view) {
+        Intent intent = new Intent(this, BlutoothActivity.class);
+        startActivity(intent);
+    }
 }
