@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothDevice;
 import android.content.pm.PackageManager;
 import android.os.Environment;
+import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -136,8 +137,23 @@ public class FullscreenActivity extends AppCompatActivity {
             Toast.makeText(FullscreenActivity.this, "Get: " + singleDevice.getName(), Toast.LENGTH_LONG).show();
         }
 
-        audioRecordDemo = new AudioRecordDemo();
+        final ImageView imageView = findViewById(R.id.imageView2);
+
+        Handler mainHandler= new Handler()
+        {
+            public void dispatchMessage(android.os.Message msg) {
+                Toast.makeText(FullscreenActivity.this, "Get: " + msg.what, Toast.LENGTH_LONG).show();
+                if (msg.what == 1) {
+                    Glide.with(getApplicationContext()).load(R.drawable.wushu).into(imageView);
+                } else if (msg.what == 2) {
+                    Glide.with(getApplicationContext()).load(R.drawable.sorry).into(imageView);
+                }
+            }
+        };
+        audioRecordDemo = new AudioRecordDemo(70, 5, mainHandler);
         audioRecordDemo.getNoiseLevel();
+
+        Glide.with(this).load(R.drawable.sorry).asGif().into(imageView);
     }
 
     public void loadImage(View view) {
