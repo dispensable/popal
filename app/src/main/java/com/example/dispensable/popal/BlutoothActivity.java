@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.invoke.ConstantCallSite;
 import java.util.List;
 
 import eu.basicairdata.bluetoothhelper.BluetoothHelper;
@@ -104,27 +106,28 @@ public class BlutoothActivity extends AppCompatActivity implements AdapterView.O
                 {
                     text3.append("\n"+device.getName()+"==>"+device.getAddress()+"\n");
                 }
-
+                Toast.makeText(BlutoothActivity.this, ">>>:" + device.getName(), Toast.LENGTH_LONG).show();
                 bluetoothList.add(device.getName());
 
             }else if(action.equals(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)){
 
                 text2.setText("搜索完成...");
 
-                // add a bluttooth list to the view
-                Spinner spinner = (Spinner) findViewById(R.id.spinner2);
-                // Create an ArrayAdapter using the string array and a default spinner layout
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(BlutoothActivity.this, android.R.layout.simple_spinner_item, bluetoothList);
-                // Specify the layout to use when the list of choices appears
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                // Apply the adapter to the spinner
-                spinner.setAdapter(adapter);
-                spinner.setOnItemSelectedListener(BlutoothActivity.this);
+//                ConstraintLayout mainLayout = findViewById(R.id.bluetooth_view);
+//                LayoutInflater layoutInflater = LayoutInflater.from(BlutoothActivity.this);
+//                View bluetoothDeviceListLayout = layoutInflater.inflate(R.layout.blutooth_device_list, null);
+//                mainLayout.addView(bluetoothDeviceListLayout);
+//
+//                // add a bluttooth list to the view
+//                Spinner spinner = (Spinner) findViewById(R.id.spinner2);
+//                // Create an ArrayAdapter using the string array and a default spinner layout
+//                ArrayAdapter<String> adapter = new ArrayAdapter<String>(BlutoothActivity.this, android.R.layout.simple_spinner_item, bluetoothList);
+//                // Specify the layout to use when the list of choices appears
+//                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//                // Apply the adapter to the spinner
+//                spinner.setAdapter(adapter);
+//                spinner.setOnItemSelectedListener(BlutoothActivity.this);
 
-                LinearLayout mainLayout = (LinearLayout) findViewById(R.id.bluetooth_view);
-                LayoutInflater layoutInflater = LayoutInflater.from(BlutoothActivity.this);
-                View bluetoothDeviceListLayout = layoutInflater.inflate(R.layout.blutooth_device_list, null);
-                mainLayout.addView(bluetoothDeviceListLayout);
             }
 
         }
