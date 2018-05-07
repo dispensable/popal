@@ -106,6 +106,7 @@ public class FullscreenActivity extends AppCompatActivity {
     };
 
     private AudioRecordDemo audioRecordDemo;
+    public static final int REQUEST_CODE = 666;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,9 +145,9 @@ public class FullscreenActivity extends AppCompatActivity {
             public void dispatchMessage(android.os.Message msg) {
                 Toast.makeText(FullscreenActivity.this, "Get: " + msg.what, Toast.LENGTH_LONG).show();
                 if (msg.what == 1) {
-                    Glide.with(getApplicationContext()).load(R.drawable.wushu).into(imageView);
+                    Glide.with(getApplicationContext()).load(R.drawable.wushu).asGif().into(imageView);
                 } else if (msg.what == 2) {
-                    Glide.with(getApplicationContext()).load(R.drawable.sorry).into(imageView);
+                    Glide.with(getApplicationContext()).load(R.drawable.sorry).asGif().into(imageView);
                 }
             }
         };
@@ -160,7 +161,11 @@ public class FullscreenActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
+            Log.i("----->>>> ", "not granted!");
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
 
+        } else {
             ImageView imageView = findViewById(R.id.imageView2);
             //String url = "https://www.jianlc.net/upload/img/2017/01/19/58806874604c3.jpg";
             File file = new File(getFilesDir(), "1000.gif");
@@ -172,8 +177,31 @@ public class FullscreenActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(FullscreenActivity.this, "this file dose not exists!" + file, Toast.LENGTH_LONG).show();
             }
-        } else {
-            Log.i("----->>>> ", "not granted!");
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+
+                } else {
+
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
         }
     }
 
@@ -265,4 +293,6 @@ public class FullscreenActivity extends AppCompatActivity {
         super.onStop();
         audioRecordDemo.isGetVoiceRun = false;
     }
+
+
 }
