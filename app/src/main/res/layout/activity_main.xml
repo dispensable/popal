@@ -1,59 +1,72 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="219dp"
-        android:layout_height="42dp"
-        android:layout_marginTop="444dp"
-        android:onClick="sendMessage"
-        android:text="@string/button_send"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="220dp"
-        android:layout_height="30dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="24dp"
-        android:entries="@array/cases"
-        app:layout_constraintEnd_toStartOf="@+id/button2"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <android.support.constraint.Barrier
-        android:id="@+id/barrier2"
+    <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:barrierDirection="left" />
+        android:id="@+id/scrollView"
+        android:layout_below="@+id/editText2"
+        android:layout_alignStart="@+id/editText2"
+        android:layout_alignParentBottom="true"
+        android:layout_alignEnd="@+id/serialSendText">
+
+        <TextView
+            android:id="@+id/serialReveicedText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:textSize="10sp"
+            android:layout_below="@+id/editText2"
+            android:layout_alignStart="@+id/editText2"
+            android:layout_alignEnd="@+id/serialSendText"
+            android:layout_alignParentBottom="true" />
+    </ScrollView>
 
     <Button
-        android:id="@+id/button2"
-        android:layout_width="48dp"
-        android:layout_height="44dp"
-        android:text="@string/button_add"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/spinner"
-        tools:layout_editor_absoluteY="16dp" />
+        android:id="@+id/buttonSerialSend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/serialSendText"
+        android:layout_alignRight="@+id/serialSendText"
+        android:text="Send Data" />
+
+    <TextView
+        android:id="@+id/editText2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/serialSendText"
+        android:layout_below="@+id/serialSendText"
+        android:layout_marginTop="20dp"
+        android:ems="10"
+        android:text="Received Data:"
+        android:textSize="25sp" />
+
+    <EditText
+        android:id="@+id/serialSendText"
+        android:layout_width="310dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/buttonScan"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="22dp"
+        android:background="#555555"
+        android:bufferType="editable"
+        android:ems="10"
+        android:inputType="text"
+        android:text="Data sending Area"
+        android:textColor="#999999"
+        android:textSize="20dip" />
 
     <Button
-        android:id="@+id/button3"
-        android:layout_width="219dp"
-        android:layout_height="47dp"
-        android:layout_marginTop="317dp"
-        android:onClick="searchBluetooth"
-        android:text="@string/open_bluetooth"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button2" />
-</android.support.constraint.ConstraintLayout>
+        android:id="@+id/buttonScan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/serialSendText"
+        android:layout_alignParentTop="true"
+        android:text="Scan" />
+
+</RelativeLayout>

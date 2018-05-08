@@ -2,10 +2,7 @@ package com.example.dispensable.popal;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.bluetooth.BluetoothDevice;
 import android.content.pm.PackageManager;
-import android.os.Environment;
-import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -19,16 +16,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-//import com.github.piasy.rxandroidaudio.StreamAudioRecorder;
-//import com.github.piasy.audioprocessor.AudioProcessor;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import me.aflak.bluetooth.Bluetooth;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -131,12 +120,6 @@ public class FullscreenActivity extends AppCompatActivity {
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
-        PopalApp popalApp = (PopalApp) getApplicationContext();
-        Bluetooth bluetooth = popalApp.getBluetooth();
-        List<BluetoothDevice> devices = bluetooth.getPairedDevices();
-        for(BluetoothDevice singleDevice: devices) {
-            Toast.makeText(FullscreenActivity.this, "Get: " + singleDevice.getName(), Toast.LENGTH_LONG).show();
-        }
 
         final ImageView imageView = findViewById(R.id.imageView2);
 

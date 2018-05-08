@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
 
     <application
         android:name=".PopalApp"
@@ -24,13 +26,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DisplayMessageActivity"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
-        <activity
             android:name=".FullscreenActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_fullscreen"
@@ -39,7 +34,7 @@
             android:name=".ScenesActivity"
             android:label="@string/title_activity_scenes"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".BlutoothActivity"></activity>
+        <service android:name="com.example.dispensable.popal.BluetoothLeService" android:enabled="true"/>
     </application>
 
 </manifest>

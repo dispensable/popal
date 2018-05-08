@@ -1,18 +1,10 @@
 package com.example.dispensable.popal;
-
-import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.ImageView;
-
-import com.bumptech.glide.Glide;
-
-import me.aflak.bluetooth.Bluetooth;
 
 public class AudioRecordDemo {
 
