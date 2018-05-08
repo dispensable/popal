@@ -1,5 +1,6 @@
 package com.example.dispensable.popal;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -112,4 +113,34 @@ public class CanvasActivity extends BlunoLibrary {
         audioRecordDemo = new AudioRecordDemo(70, 5, mainHandler);
         audioRecordDemo.getNoiseLevel();
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        onActivityResultProcess(requestCode, resultCode, data);					//onActivityResult Process by BlunoLibrary
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    protected void onResume(){
+        super.onResume();
+        System.out.println("BlUNOActivity onResume");
+        onResumeProcess();														//onResume Process by BlunoLibrary
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        onPauseProcess();														//onPause Process by BlunoLibrary
+    }
+
+    protected void onStop() {
+        super.onStop();
+        onStopProcess();														//onStop Process by BlunoLibrary
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        onDestroyProcess();														//onDestroy Process by BlunoLibrary
+    }
+
 }

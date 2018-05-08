@@ -12,4 +12,5 @@
     <string name="step_1">step1: add all the gif source to app</string>
     <string name="step_2">step2: set action to this gif when sensor condition satisfied</string>
     <string name="open_bluetooth">open bluetooth setting</string>
+    <string name="title_activity_main">MainActivity</string>
 </resources>
