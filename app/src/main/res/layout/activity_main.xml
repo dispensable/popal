@@ -7,24 +7,25 @@
     android:focusableInTouchMode="true">
 
     <ScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/scrollView"
-        android:layout_below="@+id/editText2"
-        android:layout_alignStart="@+id/editText2"
+        android:layout_width="wrap_content"
+        android:layout_height="238dp"
+        android:layout_alignEnd="@+id/serialSendText"
         android:layout_alignParentBottom="true"
-        android:layout_alignEnd="@+id/serialSendText">
+        android:layout_alignStart="@+id/editText2"
+        android:layout_below="@+id/editText2"
+        android:layout_marginBottom="109dp">
 
         <TextView
             android:id="@+id/serialReveicedText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:textSize="10sp"
-            android:layout_below="@+id/editText2"
-            android:layout_alignStart="@+id/editText2"
             android:layout_alignEnd="@+id/serialSendText"
-            android:layout_alignParentBottom="true" />
+            android:layout_alignParentBottom="true"
+            android:layout_alignStart="@+id/editText2"
+            android:layout_below="@+id/editText2"
+            android:ems="10"
+            android:textSize="10sp" />
     </ScrollView>
 
     <Button
@@ -68,5 +69,15 @@
         android:layout_alignLeft="@+id/serialSendText"
         android:layout_alignParentTop="true"
         android:text="Scan" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/scrollView"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="14dp"
+        android:onClick="startFullScreen"
+        android:text="Button" />
 
 </RelativeLayout>

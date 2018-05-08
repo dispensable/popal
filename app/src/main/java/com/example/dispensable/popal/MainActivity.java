@@ -49,6 +49,9 @@ public class MainActivity  extends BlunoLibrary {
                 buttonScanOnClickProcess();										//Alert Dialog for selecting the BLE device
             }
         });
+
+        PopalApp app = (PopalApp) getApplication();
+        app.main = this;
     }
 
     protected void onResume(){
@@ -111,5 +114,10 @@ public class MainActivity  extends BlunoLibrary {
         serialReceivedText.append(theString);							//append the text into the EditText
         //The Serial data from the BLUNO may be sub-packaged, so using a buffer to hold the String is a good choice.
         ((ScrollView)serialReceivedText.getParent()).fullScroll(View.FOCUS_DOWN);
+    }
+
+    public void startFullScreen(View view) {
+        Intent intent = new Intent(this, CanvasActivity.class);
+        startActivity(intent);
     }
 }

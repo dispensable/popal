@@ -122,6 +122,7 @@ public class FullscreenActivity extends AppCompatActivity {
         findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
 
         final ImageView imageView = findViewById(R.id.imageView2);
+        final PopalApp popalApp = (PopalApp) getApplication();
 
         Handler mainHandler= new Handler()
         {
@@ -129,6 +130,7 @@ public class FullscreenActivity extends AppCompatActivity {
                 Toast.makeText(FullscreenActivity.this, "Get: " + msg.what, Toast.LENGTH_LONG).show();
                 if (msg.what == 1) {
                     Glide.with(getApplicationContext()).load(R.drawable.wushu).asGif().into(imageView);
+                    popalApp.main.serialSend("motherfucker!");
                 } else if (msg.what == 2) {
                     Glide.with(getApplicationContext()).load(R.drawable.sorry).asGif().into(imageView);
                 }
