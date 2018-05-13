@@ -9,7 +9,7 @@
         android:id="@+id/animation_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:lottie_rawRes="@raw/lottie_data_origin"
+        app:lottie_rawRes="@raw/firefly"
         app:lottie_loop="true"
         app:lottie_autoPlay="true" />
 
