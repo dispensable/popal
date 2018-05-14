@@ -30,7 +30,8 @@ public class CanvasActivity extends BlunoLibrary {
     public enum fireflyStatus {
         still,
         out,
-        in
+        in,
+        empty
     }
 
     @Override
@@ -47,21 +48,24 @@ public class CanvasActivity extends BlunoLibrary {
             public void dispatchMessage(android.os.Message msg) {
                 Toast.makeText(CanvasActivity.this, "Get: " + msg.what, Toast.LENGTH_LONG).show();
                 if (isInAnimationCycle) {
+                    Log.i("--->>> return", "return");
                     return;
                 }
 
                 if (msg.what == 1) {
                     Log.e("VVVVVVVV", "1");
                     isInAnimationCycle = true;
+                    lottieAnimationView.addAnimatorUpdateListener((animation) -> {
+                        Log.i("status --", animation.getAnimatedValue().toString());
+                        float value = (float) animation.getAnimatedValue();
+                        if (value == 1.0) {
+                            showFirefly(fireflyStatus.still, 0);
+                            serialSend("2");
+                            isInAnimationCycle = false;
+                            lottieAnimationView.removeAllAnimatorListeners();
+                        }
+                    });
                     showFirefly(fireflyStatus.out, 0);
-                    serialSend("1");
-                    showFirefly(fireflyStatus.still, 15);
-                    showFirefly(fireflyStatus.in, 1);
-                    showFirefly(fireflyStatus.still, 1);
-                    isInAnimationCycle = false;
-                } else if (msg.what == 2) {
-                    Log.e("VVVVVVVV", "2");
-                    serialSend("2");
                 }
             }
         };
@@ -75,7 +79,7 @@ public class CanvasActivity extends BlunoLibrary {
 
         // set firefly still
         lottieAnimationView = (LottieAnimationView) findViewById(R.id.animation_view);
-        showFirefly(fireflyStatus.out, 1);
+        showFirefly(fireflyStatus.still, 1);
     }
 
     @Override
@@ -252,20 +256,26 @@ public class CanvasActivity extends BlunoLibrary {
     private void showAnimation(String imageFolder, String jsonFile, int repeatCount) {
         lottieAnimationView.setRepeatCount(repeatCount);
         lottieAnimationView.setImageAssetsFolder(imageFolder);
-        lottieAnimationView.setAnimation(jsonFile);
+        lottieAnimationView.setAnimation(jsonFile, LottieAnimationView.CacheStrategy.Strong);
         lottieAnimationView.playAnimation();
     }
 
     private void showFirefly(fireflyStatus status, int repeatCount) {
         switch (status) {
             case still:
-                showAnimation("firefly_still_image", "firefly_still_data", repeatCount);
+                showAnimation("firefly_still_image", "firefly_still_data.json", repeatCount);
                 break;
             case in:
-                showAnimation("firefly_in_image", "firefly_in_data", repeatCount);
+                showAnimation("firefly_in_image", "firefly_in_data.json", repeatCount);
                 break;
             case out:
-                showAnimation("firefly_out_image", "firefly_out_data", repeatCount);
+                showAnimation("firefly_out_image", "firefly_out_data.json", repeatCount);
+        }
+    }
+
+    private void waitAnimationStop() {
+        while (lottieAnimationView.isAnimating()) {
+            Log.i(">>>>", "animatinnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnng");
         }
     }
 
