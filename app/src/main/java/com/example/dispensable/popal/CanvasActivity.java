@@ -29,9 +29,7 @@ public class CanvasActivity extends BlunoLibrary {
 
     public enum fireflyStatus {
         still,
-        out,
-        in,
-        empty
+        whole
     }
 
     @Override
@@ -46,7 +44,6 @@ public class CanvasActivity extends BlunoLibrary {
         mainHandler = new Handler()
         {
             public void dispatchMessage(android.os.Message msg) {
-                Toast.makeText(CanvasActivity.this, "Get: " + msg.what, Toast.LENGTH_LONG).show();
                 if (isInAnimationCycle) {
                     Log.i("--->>> return", "return");
                     return;
@@ -54,6 +51,7 @@ public class CanvasActivity extends BlunoLibrary {
 
                 if (msg.what == 1) {
                     Log.e("VVVVVVVV", "1");
+                    Toast.makeText(CanvasActivity.this, "sending: " + msg.what, Toast.LENGTH_LONG).show();
                     isInAnimationCycle = true;
                     lottieAnimationView.addAnimatorUpdateListener((animation) -> {
                         Log.i("status --", animation.getAnimatedValue().toString());
@@ -61,11 +59,13 @@ public class CanvasActivity extends BlunoLibrary {
                         if (value == 1.0) {
                             showFirefly(fireflyStatus.still, 0);
                             serialSend("2");
+                            Toast.makeText(CanvasActivity.this, "sending: 2", Toast.LENGTH_LONG).show();
                             isInAnimationCycle = false;
                             lottieAnimationView.removeAllAnimatorListeners();
                         }
                     });
-                    showFirefly(fireflyStatus.out, 0);
+                    showFirefly(fireflyStatus.whole, 0);
+                    serialSend("1");
                 }
             }
         };
@@ -265,17 +265,11 @@ public class CanvasActivity extends BlunoLibrary {
             case still:
                 showAnimation("firefly_still_image", "firefly_still_data.json", repeatCount);
                 break;
-            case in:
-                showAnimation("firefly_in_image", "firefly_in_data.json", repeatCount);
+            case whole:
+                showAnimation("firefly_whole_image", "firefly_whole_data.json", repeatCount);
                 break;
-            case out:
-                showAnimation("firefly_out_image", "firefly_out_data.json", repeatCount);
-        }
-    }
-
-    private void waitAnimationStop() {
-        while (lottieAnimationView.isAnimating()) {
-            Log.i(">>>>", "animatinnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnng");
+            default:
+                showAnimation("firefly_still_image", "firefly_still_data.json", repeatCount);
         }
     }
 
