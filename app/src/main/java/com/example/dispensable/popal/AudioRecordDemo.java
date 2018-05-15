@@ -47,7 +47,6 @@ public class AudioRecordDemo {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                int count = 0;
                 mAudioRecord.startRecording();
                 short[] buffer = new short[BUFFER_SIZE];
                 while (isGetVoiceRun) {
@@ -64,7 +63,7 @@ public class AudioRecordDemo {
                     Log.d(TAG, "分贝值:" + volume);
 
                     // 如果声音大到临界值，切换图片显示，开始计时
-                    if (volume > volumeEdge && isGifPlayEnd) {
+                    if (volume > volumeEdge) {
                         isGifPlayEnd = false;
                         startCount = true;
                         Log.d(TAG, "开始计时:" + volume);
@@ -74,23 +73,10 @@ public class AudioRecordDemo {
                         msg.sendToTarget();
                     }
 
-                    // 如果记时超过指定时间，停止计时，并切换到第一张图
-                    if (startCount && count >= secoundAfterGifChange * 10) {
-                        count = 0;
-                        startCount = false;
-                        Message msg = handler.obtainMessage();
-                        msg.what = 2;
-                        msg.sendToTarget();
-                        Log.d(TAG, "停止计时:" + volume);
-                        isGifPlayEnd = true;
-                    }
-
                     // 大概一秒十次
                     synchronized (mLock) {
                         try {
                             mLock.wait(100);
-                            // 计时实现
-                            if (startCount) { count += 1;}
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }

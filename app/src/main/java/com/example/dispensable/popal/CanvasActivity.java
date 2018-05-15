@@ -26,6 +26,7 @@ public class CanvasActivity extends BlunoLibrary {
     private static Handler mainHandler;
     private LottieAnimationView lottieAnimationView;
     private boolean isInAnimationCycle = false;
+    private fireflyStatus nowStatus = fireflyStatus.still;
 
     public enum fireflyStatus {
         still,
@@ -50,20 +51,8 @@ public class CanvasActivity extends BlunoLibrary {
                 }
 
                 if (msg.what == 1) {
-                    Log.e("VVVVVVVV", "1");
                     Toast.makeText(CanvasActivity.this, "sending: " + msg.what, Toast.LENGTH_LONG).show();
                     isInAnimationCycle = true;
-                    lottieAnimationView.addAnimatorUpdateListener((animation) -> {
-                        Log.i("status --", animation.getAnimatedValue().toString());
-                        float value = (float) animation.getAnimatedValue();
-                        if (value == 1.0) {
-                            showFirefly(fireflyStatus.still, 0);
-                            serialSend("2");
-                            Toast.makeText(CanvasActivity.this, "sending: 2", Toast.LENGTH_LONG).show();
-                            isInAnimationCycle = false;
-                            lottieAnimationView.removeAllAnimatorListeners();
-                        }
-                    });
                     showFirefly(fireflyStatus.whole, 0);
                     serialSend("1");
                 }
@@ -79,7 +68,18 @@ public class CanvasActivity extends BlunoLibrary {
 
         // set firefly still
         lottieAnimationView = (LottieAnimationView) findViewById(R.id.animation_view);
-        showFirefly(fireflyStatus.still, 1);
+        showFirefly(fireflyStatus.whole, 0);
+        lottieAnimationView.addAnimatorUpdateListener((animation) -> {
+            if (!isInAnimationCycle) {
+                return;
+            }
+            float value = (float) animation.getAnimatedValue();
+            if (value == 1.0) {
+                serialSend("2");
+                isInAnimationCycle = false;
+                Log.e("cycle: ", "in: " + isInAnimationCycle);
+            }
+        });
     }
 
     @Override
