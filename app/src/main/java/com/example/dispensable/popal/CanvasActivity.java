@@ -98,7 +98,15 @@ public class CanvasActivity extends BlunoLibrary {
             case isConnected:
                 Log.e("BBB:", "connected!");
                 hasConnected = true;
-                audioRecordDemo = new AudioRecordDemo(70, 5, mainHandler);
+                Intent intent = getIntent();
+                int noiseValue = 70;
+                try {
+                    noiseValue = Integer.parseInt(intent.getStringExtra("noise_value"));
+                } catch (NumberFormatException e) {
+                    Toast.makeText(CanvasActivity.this, "this is not a number, will use 70", Toast.LENGTH_LONG).show();
+                }
+
+                audioRecordDemo = new AudioRecordDemo(noiseValue, 5, mainHandler);
                 audioRecordDemo.getNoiseLevel();
                 break;
             case isConnecting:
