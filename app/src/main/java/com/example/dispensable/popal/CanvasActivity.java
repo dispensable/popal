@@ -41,45 +41,13 @@ public class CanvasActivity extends BlunoLibrary {
         onCreateProcess();														//onCreate Process by BlunoLibrary
         serialBegin(115200);
         connectToBluno();
-
-        mainHandler = new Handler()
-        {
-            public void dispatchMessage(android.os.Message msg) {
-                if (isInAnimationCycle) {
-                    Log.i("--->>> return", "return");
-                    return;
-                }
-
-                if (msg.what == 1) {
-                    Toast.makeText(CanvasActivity.this, "sending: " + msg.what, Toast.LENGTH_LONG).show();
-                    isInAnimationCycle = true;
-                    showFirefly(fireflyStatus.whole, 0);
-                    serialSend("1");
-                }
-            }
-        };
-
         setFullScreen(this);
         if (hasNavBar(this)) {
             hideBottomUIMenu();
         }
-
         setScreenOn();
-
         // set firefly still
         lottieAnimationView = (LottieAnimationView) findViewById(R.id.animation_view);
-        showFirefly(fireflyStatus.whole, 0);
-        lottieAnimationView.addAnimatorUpdateListener((animation) -> {
-            if (!isInAnimationCycle) {
-                return;
-            }
-            float value = (float) animation.getAnimatedValue();
-            if (value == 1.0) {
-                serialSend("2");
-                isInAnimationCycle = false;
-                Log.e("cycle: ", "in: " + isInAnimationCycle);
-            }
-        });
     }
 
     @Override
@@ -97,17 +65,6 @@ public class CanvasActivity extends BlunoLibrary {
         switch (theConnectionState) {											//Four connection state
             case isConnected:
                 Log.e("BBB:", "connected!");
-                hasConnected = true;
-                Intent intent = getIntent();
-                int noiseValue = 70;
-                try {
-                    noiseValue = Integer.parseInt(intent.getStringExtra("noise_value"));
-                } catch (NumberFormatException e) {
-                    Toast.makeText(CanvasActivity.this, "this is not a number, will use 70", Toast.LENGTH_LONG).show();
-                }
-
-                audioRecordDemo = new AudioRecordDemo(noiseValue, 5, mainHandler);
-                audioRecordDemo.getNoiseLevel();
                 break;
             case isConnecting:
                 hasConnected = false;
@@ -266,19 +223,6 @@ public class CanvasActivity extends BlunoLibrary {
         lottieAnimationView.setImageAssetsFolder(imageFolder);
         lottieAnimationView.setAnimation(jsonFile, LottieAnimationView.CacheStrategy.Strong);
         lottieAnimationView.playAnimation();
-    }
-
-    private void showFirefly(fireflyStatus status, int repeatCount) {
-        switch (status) {
-            case still:
-                showAnimation("firefly_still_image", "firefly_still_data.json", repeatCount);
-                break;
-            case whole:
-                showAnimation("firefly_whole_image", "firefly_whole_data.json", repeatCount);
-                break;
-            default:
-                showAnimation("firefly_still_image", "firefly_still_data.json", repeatCount);
-        }
     }
 
 }
