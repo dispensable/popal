@@ -26,7 +26,6 @@ public class CanvasActivity extends BlunoLibrary {
     private AudioRecordDemo audioRecordDemo;
     private static Handler mainHandler;
     private LottieAnimationView lottieAnimationView;
-    private boolean isInAnimationCycle = false;
     private fireflyStatus nowStatus = fireflyStatus.still;
 
     public enum fireflyStatus {
@@ -48,17 +47,16 @@ public class CanvasActivity extends BlunoLibrary {
         mainHandler = new Handler()
         {
             public void dispatchMessage(android.os.Message msg) {
-//                if (isInAnimationCycle) {
-//                    Log.i("--->>> return", "return");
-//                    return;
-//                }
+                if (lottieAnimationView.isAnimating()) {
+                    Log.i("--->>> return", "return");
+                    return;
+                }
 
                 if (msg.what == 1 && !use_wave) {
                     Toast.makeText(CanvasActivity.this, "sending: " + msg.what, Toast.LENGTH_LONG).show();
-                    isInAnimationCycle = true;
-
                     showFirefly(fireflyStatus.whole, 0);
                     serialSend("1");
+                    showAnimation("firefly_in", "firefly_in.json", 0);
                 }
             }
         };
@@ -80,20 +78,6 @@ public class CanvasActivity extends BlunoLibrary {
             // set firefly still
             showFirefly(fireflyStatus.whole, 0);
         }
-
-        lottieAnimationView.addAnimatorUpdateListener((animation) -> {
-            if (!isInAnimationCycle) {
-                Log.i("~~~~~~>", " eiiiiiiiii");
-                return;
-            }
-            float value = (float) animation.getAnimatedValue();
-            Log.i("----> value: ", "" + value);
-            if (value == 1.0) {
-                serialSend("2");
-                isInAnimationCycle = false;
-                Log.e("cycle: ", "in: " + isInAnimationCycle);
-            }
-        });
     }
 
     @Override
@@ -103,8 +87,7 @@ public class CanvasActivity extends BlunoLibrary {
         if (theString.equals("3")) {
 
             use_wave = !use_wave;
-            isInAnimationCycle = false;
-
+            lottieAnimationView.cancelAnimation();
             if (!use_wave) {
                 showFirefly(fireflyStatus.whole, 0);
             } else {
@@ -315,8 +298,7 @@ public class CanvasActivity extends BlunoLibrary {
             @Override
             public void onClick(View v) {
                 Log.w(">>> touch me: ", "has been touched!");
-                if (!isInAnimationCycle && use_wave) {
-                    isInAnimationCycle = true;
+                if (!lottieAnimationView.isAnimating() && use_wave) {
                     showAnimation("wave_whole_image", "wave_whole_image.json", 0);
                     serialSend("4");
                 }
