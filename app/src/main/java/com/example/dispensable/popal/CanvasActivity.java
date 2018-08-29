@@ -54,9 +54,8 @@ public class CanvasActivity extends BlunoLibrary {
 
                 if (msg.what == 1 && !use_wave) {
                     Toast.makeText(CanvasActivity.this, "sending: " + msg.what, Toast.LENGTH_LONG).show();
-                    showFirefly(fireflyStatus.whole, 0);
+                    showAnimation("firefly_out", "firefly_out.json", 0);
                     serialSend("1");
-                    showAnimation("firefly_in", "firefly_in.json", 0);
                 }
             }
         };
@@ -89,11 +88,16 @@ public class CanvasActivity extends BlunoLibrary {
             use_wave = !use_wave;
             lottieAnimationView.cancelAnimation();
             if (!use_wave) {
-                showFirefly(fireflyStatus.whole, 0);
+                showAnimation("firefly_in", "firefly_in.json", 0);
             } else {
                 showAnimation("wave_whole_image", "wave_whole_image.json", 0);
             }
         }
+
+        if (theString.equals("1") && !use_wave) {
+            showAnimation("firefly_in", "firefly_in.json", 0);
+        }
+
     }
 
     public void connectToBluno() {
