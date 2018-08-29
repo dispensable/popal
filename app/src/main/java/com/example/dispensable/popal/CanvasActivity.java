@@ -34,7 +34,7 @@ public class CanvasActivity extends BlunoLibrary {
         whole
     }
 
-    private boolean use_wave = true;
+    private boolean use_wave = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,14 +48,15 @@ public class CanvasActivity extends BlunoLibrary {
         mainHandler = new Handler()
         {
             public void dispatchMessage(android.os.Message msg) {
-                if (isInAnimationCycle) {
-                    Log.i("--->>> return", "return");
-                    return;
-                }
+//                if (isInAnimationCycle) {
+//                    Log.i("--->>> return", "return");
+//                    return;
+//                }
 
-                if (msg.what == 1) {
+                if (msg.what == 1 && !use_wave) {
                     Toast.makeText(CanvasActivity.this, "sending: " + msg.what, Toast.LENGTH_LONG).show();
                     isInAnimationCycle = true;
+
                     showFirefly(fireflyStatus.whole, 0);
                     serialSend("1");
                 }
@@ -82,9 +83,11 @@ public class CanvasActivity extends BlunoLibrary {
 
         lottieAnimationView.addAnimatorUpdateListener((animation) -> {
             if (!isInAnimationCycle) {
+                Log.i("~~~~~~>", " eiiiiiiiii");
                 return;
             }
             float value = (float) animation.getAnimatedValue();
+            Log.i("----> value: ", "" + value);
             if (value == 1.0) {
                 serialSend("2");
                 isInAnimationCycle = false;
@@ -96,9 +99,17 @@ public class CanvasActivity extends BlunoLibrary {
     @Override
     public void onSerialReceived(String theString) {							//Once connection data received, this function will be called
         // when you get msg from arduino
-        Log.i("recieved:", theString);
+        Log.i("recieved------------:", theString);
         if (theString.equals("3")) {
+
             use_wave = !use_wave;
+            isInAnimationCycle = false;
+
+            if (!use_wave) {
+                showFirefly(fireflyStatus.whole, 0);
+            } else {
+                showAnimation("wave_whole_image", "wave_whole_image.json", 0);
+            }
         }
     }
 
@@ -283,6 +294,10 @@ public class CanvasActivity extends BlunoLibrary {
     }
 
     private void showFirefly(fireflyStatus status, int repeatCount) {
+        if (use_wave) {
+            return;
+        }
+
         switch (status) {
             case still:
                 showAnimation("firefly_still_image", "firefly_still_data.json", repeatCount);
@@ -300,7 +315,7 @@ public class CanvasActivity extends BlunoLibrary {
             @Override
             public void onClick(View v) {
                 Log.w(">>> touch me: ", "has been touched!");
-                if (!isInAnimationCycle) {
+                if (!isInAnimationCycle && use_wave) {
                     isInAnimationCycle = true;
                     showAnimation("wave_whole_image", "wave_whole_image.json", 0);
                     serialSend("4");
