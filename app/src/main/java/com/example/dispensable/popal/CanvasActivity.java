@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.app.Activity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.Window;
@@ -32,6 +33,8 @@ public class CanvasActivity extends BlunoLibrary {
         still,
         whole
     }
+
+    private boolean use_wave = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,9 +69,17 @@ public class CanvasActivity extends BlunoLibrary {
 
         setScreenOn();
 
-        // set firefly still
         lottieAnimationView = (LottieAnimationView) findViewById(R.id.animation_view);
-        showFirefly(fireflyStatus.whole, 0);
+        setTouchListener();
+
+        // show wave still
+        if (use_wave) {
+            showAnimation("wave_whole_image", "wave_whole_image.json", 0);
+        } else {
+            // set firefly still
+            showFirefly(fireflyStatus.whole, 0);
+        }
+
         lottieAnimationView.addAnimatorUpdateListener((animation) -> {
             if (!isInAnimationCycle) {
                 return;
@@ -86,6 +97,9 @@ public class CanvasActivity extends BlunoLibrary {
     public void onSerialReceived(String theString) {							//Once connection data received, this function will be called
         // when you get msg from arduino
         Log.i("recieved:", theString);
+        if (theString.equals("3")) {
+            use_wave = !use_wave;
+        }
     }
 
     public void connectToBluno() {
@@ -279,6 +293,21 @@ public class CanvasActivity extends BlunoLibrary {
             default:
                 showAnimation("firefly_still_image", "firefly_still_data.json", repeatCount);
         }
+    }
+
+    private void setTouchListener() {
+        lottieAnimationView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.w(">>> touch me: ", "has been touched!");
+                if (!isInAnimationCycle) {
+                    return;
+                }
+                isInAnimationCycle = true;
+                showAnimation("wave_whole_image", "wave_whole_image.json", 0);
+                serialSend("4");
+            }
+        });
     }
 
 }
