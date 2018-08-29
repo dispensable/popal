@@ -301,11 +301,10 @@ public class CanvasActivity extends BlunoLibrary {
             public void onClick(View v) {
                 Log.w(">>> touch me: ", "has been touched!");
                 if (!isInAnimationCycle) {
-                    return;
+                    isInAnimationCycle = true;
+                    showAnimation("wave_whole_image", "wave_whole_image.json", 0);
+                    serialSend("4");
                 }
-                isInAnimationCycle = true;
-                showAnimation("wave_whole_image", "wave_whole_image.json", 0);
-                serialSend("4");
             }
         });
     }
