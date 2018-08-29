@@ -3,6 +3,10 @@ package com.example.dispensable.popal;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,13 +24,14 @@ import com.airbnb.lottie.LottieImageAsset;
 import java.lang.reflect.Method;
 
 
-public class CanvasActivity extends BlunoLibrary {
+public class CanvasActivity extends BlunoLibrary implements SensorEventListener {
     private boolean hasConnected = false;
     private AudioRecordDemo audioRecordDemo;
     private static Handler mainHandler;
     private LottieAnimationView lottieAnimationView;
-    private boolean isInAnimationCycle = false;
+    private boolean use_flower = false;
     private fireflyStatus nowStatus = fireflyStatus.still;
+    private SensorManager mManager;//传感器管理对象
 
     public enum fireflyStatus {
         still,
@@ -48,12 +53,53 @@ public class CanvasActivity extends BlunoLibrary {
         setScreenOn();
         // set firefly still
         lottieAnimationView = (LottieAnimationView) findViewById(R.id.animation_view);
+
+        if (!use_flower) {
+            mManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+            mManager.registerListener(this, mManager.getDefaultSensor(Sensor.TYPE_PROXIMITY),
+                    SensorManager.SENSOR_DELAY_NORMAL);
+            showAnimation("firefly_whole_image", "firefly_whole_data.json", -1);
+        }
     }
 
     @Override
     public void onSerialReceived(String theString) {							//Once connection data received, this function will be called
         // when you get msg from arduino
         Log.i("recieved:", theString);
+        if (theString.equals("1") && use_flower && !lottieAnimationView.isAnimating()) {
+            showAnimation("firefly_whole_image", "firefly_whole_data.json", 0);
+        }
+
+        if (theString.equals("3")) {
+            use_flower = !use_flower;
+        }
+
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        float[] its = event.values;
+
+        Log.d("|---> ","sensor type :" + event.sensor.getType() + " proximity type:" + Sensor.TYPE_PROXIMITY);
+        if (its != null && event.sensor.getType() == Sensor.TYPE_PROXIMITY && !use_flower) {
+            //经过测试，当手贴近距离感应器的时候its[0]返回值为0.0，当手离开时返回1.0
+            Log.e("| ----> ", "sensor value is: " + its[0]);
+            float value = its[0];
+            if (value == 0.0) {
+                lottieAnimationView.pauseAnimation();
+                serialSend("2");
+            } else {
+                if (!lottieAnimationView.isAnimating()) {
+                    lottieAnimationView.playAnimation();
+                    serialSend("5");
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // TODO 自动生成的方法存根
     }
 
     public void connectToBluno() {
@@ -87,6 +133,7 @@ public class CanvasActivity extends BlunoLibrary {
         }
     }
 
+
     /**
      * 设置隐藏标题栏
      *
@@ -117,10 +164,6 @@ public class CanvasActivity extends BlunoLibrary {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
-    public void startAudioRecording() {
-        audioRecordDemo = new AudioRecordDemo(70, 5, mainHandler);
-        audioRecordDemo.getNoiseLevel();
-    }
 
     /**
      * 隐藏虚拟按键，并且全屏
@@ -211,7 +254,10 @@ public class CanvasActivity extends BlunoLibrary {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        onDestroyProcess();														//onDestroy Process by BlunoLibrary
+        onDestroyProcess();
+        if(mManager != null){
+            mManager.unregisterListener(this);//注销传感器监听
+        }//onDestroy Process by BlunoLibrary
     }
 
     private void setScreenOn() {
