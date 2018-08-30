@@ -75,7 +75,7 @@ public class CanvasActivity extends BlunoLibrary {
             showAnimation("wave_whole_image", "wave_whole_image.json", 0);
         } else {
             // set firefly still
-            showFirefly(fireflyStatus.whole, 0);
+            showAnimation("firefly_in", "firefly_in.json", 0);
         }
     }
 
