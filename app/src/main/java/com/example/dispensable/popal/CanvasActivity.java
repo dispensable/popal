@@ -29,7 +29,7 @@ public class CanvasActivity extends BlunoLibrary implements SensorEventListener 
     private AudioRecordDemo audioRecordDemo;
     private static Handler mainHandler;
     private LottieAnimationView lottieAnimationView;
-    private boolean use_flower = false;
+    private boolean use_flower = true;
     private fireflyStatus nowStatus = fireflyStatus.still;
     private SensorManager mManager;//传感器管理对象
 
@@ -59,6 +59,8 @@ public class CanvasActivity extends BlunoLibrary implements SensorEventListener 
             mManager.registerListener(this, mManager.getDefaultSensor(Sensor.TYPE_PROXIMITY),
                     SensorManager.SENSOR_DELAY_NORMAL);
             showAnimation("firefly_whole_image", "firefly_whole_data.json", -1);
+        } else {
+            showAnimationButNotPlay("firefly_whole_image", "firefly_whole_data.json", 0);
         }
     }
 
@@ -67,11 +69,21 @@ public class CanvasActivity extends BlunoLibrary implements SensorEventListener 
         // when you get msg from arduino
         Log.i("recieved:", theString);
         if (theString.equals("1") && use_flower && !lottieAnimationView.isAnimating()) {
-            showAnimation("firefly_whole_image", "firefly_whole_data.json", 0);
+            lottieAnimationView.playAnimation();
         }
 
         if (theString.equals("3")) {
             use_flower = !use_flower;
+            if (use_flower) {
+                showAnimationButNotPlay("firefly_whole_image", "firefly_whole_data.json", 0);
+            } else {
+                showAnimation("firefly_whole_image", "firefly_whole_data.json", -1);
+                if (mManager == null) {
+                    mManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+                    mManager.registerListener(this, mManager.getDefaultSensor(Sensor.TYPE_PROXIMITY),
+                            SensorManager.SENSOR_DELAY_NORMAL);
+                }
+            }
         }
 
     }
@@ -90,7 +102,7 @@ public class CanvasActivity extends BlunoLibrary implements SensorEventListener 
                 serialSend("2");
             } else {
                 if (!lottieAnimationView.isAnimating()) {
-                    lottieAnimationView.playAnimation();
+                    lottieAnimationView.resumeAnimation();
                     serialSend("5");
                 }
             }
@@ -269,6 +281,12 @@ public class CanvasActivity extends BlunoLibrary implements SensorEventListener 
         lottieAnimationView.setImageAssetsFolder(imageFolder);
         lottieAnimationView.setAnimation(jsonFile, LottieAnimationView.CacheStrategy.Strong);
         lottieAnimationView.playAnimation();
+    }
+
+    private void showAnimationButNotPlay(String imageFolder, String jsonFile, int repeatCount) {
+        lottieAnimationView.setRepeatCount(repeatCount);
+        lottieAnimationView.setImageAssetsFolder(imageFolder);
+        lottieAnimationView.setAnimation(jsonFile, LottieAnimationView.CacheStrategy.Strong);
     }
 
 }
