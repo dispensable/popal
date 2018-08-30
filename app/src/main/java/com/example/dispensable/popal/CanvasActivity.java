@@ -33,7 +33,7 @@ public class CanvasActivity extends BlunoLibrary {
         whole
     }
 
-    private boolean use_wave = false;
+    private boolean use_wave = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
