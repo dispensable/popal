@@ -60,7 +60,7 @@ public class CanvasActivity extends BlunoLibrary implements SensorEventListener 
                     SensorManager.SENSOR_DELAY_NORMAL);
             showAnimation("firefly_whole_image", "firefly_whole_data.json", -1);
         } else {
-            showAnimationButNotPlay("firefly_whole_image", "firefly_whole_data.json", 0);
+            showAnimationButNotPlay("firefly_whole_image", "firefly_whole_data.json", -1);
         }
     }
 
@@ -69,13 +69,17 @@ public class CanvasActivity extends BlunoLibrary implements SensorEventListener 
         // when you get msg from arduino
         Log.i("recieved:", theString);
         if (theString.equals("1") && use_flower && !lottieAnimationView.isAnimating()) {
-            lottieAnimationView.playAnimation();
+            lottieAnimationView.resumeAnimation();
+        }
+
+        if (theString.equals("2") && use_flower && lottieAnimationView.isAnimating()) {
+            lottieAnimationView.pauseAnimation();
         }
 
         if (theString.equals("3")) {
             use_flower = !use_flower;
             if (use_flower) {
-                showAnimationButNotPlay("firefly_whole_image", "firefly_whole_data.json", 0);
+                showAnimationButNotPlay("firefly_whole_image", "firefly_whole_data.json", -1);
             } else {
                 showAnimation("firefly_whole_image", "firefly_whole_data.json", -1);
                 if (mManager == null) {
@@ -98,11 +102,11 @@ public class CanvasActivity extends BlunoLibrary implements SensorEventListener 
             Log.e("| ----> ", "sensor value is: " + its[0]);
             float value = its[0];
             if (value == 0.0) {
-                lottieAnimationView.pauseAnimation();
+                lottieAnimationView.cancelAnimation();
                 serialSend("2");
             } else {
                 if (!lottieAnimationView.isAnimating()) {
-                    lottieAnimationView.resumeAnimation();
+                    lottieAnimationView.playAnimation();
                     serialSend("5");
                 }
             }
