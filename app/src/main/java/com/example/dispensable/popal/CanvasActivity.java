@@ -58,9 +58,9 @@ public class CanvasActivity extends BlunoLibrary implements SensorEventListener 
             mManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
             mManager.registerListener(this, mManager.getDefaultSensor(Sensor.TYPE_PROXIMITY),
                     SensorManager.SENSOR_DELAY_NORMAL);
-            showAnimation("flower_image", "flower.json", -1);
+            showAnimation("rain_image", "rain.json", -1);
         } else {
-            showAnimationButNotPlay("rain_image", "rain.json", -1);
+            showAnimationButNotPlay("flower_image", "flower.json", -1);
         }
     }
 
