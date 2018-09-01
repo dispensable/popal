@@ -3,15 +3,12 @@ package com.example.dispensable.popal;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.app.Activity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.Window;
@@ -24,19 +21,19 @@ import com.airbnb.lottie.LottieImageAsset;
 import java.lang.reflect.Method;
 
 
-public class CanvasActivity extends BlunoLibrary implements SensorEventListener {
+public class CanvasActivity extends BlunoLibrary {
     private boolean hasConnected = false;
     private AudioRecordDemo audioRecordDemo;
     private static Handler mainHandler;
     private LottieAnimationView lottieAnimationView;
-    private boolean use_flower = true;
     private fireflyStatus nowStatus = fireflyStatus.still;
-    private SensorManager mManager;//传感器管理对象
 
     public enum fireflyStatus {
         still,
         whole
     }
+
+    private boolean use_wave = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,76 +43,61 @@ public class CanvasActivity extends BlunoLibrary implements SensorEventListener 
         onCreateProcess();														//onCreate Process by BlunoLibrary
         serialBegin(115200);
         connectToBluno();
+
+        mainHandler = new Handler()
+        {
+            public void dispatchMessage(android.os.Message msg) {
+                if (lottieAnimationView.isAnimating()) {
+                    Log.i("--->>> return", "return");
+                    return;
+                }
+
+                if (msg.what == 1 && !use_wave) {
+                    Toast.makeText(CanvasActivity.this, "sending: " + msg.what, Toast.LENGTH_LONG).show();
+                    showAnimation("firefly_out", "firefly_out.json", 0);
+                    serialSend("1");
+                }
+            }
+        };
+
         setFullScreen(this);
         if (hasNavBar(this)) {
             hideBottomUIMenu();
         }
-        setScreenOn();
-        // set firefly still
-        lottieAnimationView = (LottieAnimationView) findViewById(R.id.animation_view);
 
-        if (!use_flower) {
-            mManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-            mManager.registerListener(this, mManager.getDefaultSensor(Sensor.TYPE_PROXIMITY),
-                    SensorManager.SENSOR_DELAY_NORMAL);
-            showAnimation("flower_image", "flower.json", -1);
+        setScreenOn();
+
+        lottieAnimationView = (LottieAnimationView) findViewById(R.id.animation_view);
+        setTouchListener();
+
+        // show wave still
+        if (use_wave) {
+            showAnimation("wave_whole_image", "wave_whole_image.json", 0);
         } else {
-            showAnimationButNotPlay("rain_image", "rain.json", -1);
+            // set firefly still
+            showAnimation("firefly_in", "firefly_in.json", 0);
         }
     }
 
     @Override
     public void onSerialReceived(String theString) {							//Once connection data received, this function will be called
         // when you get msg from arduino
-        Log.i("recieved:", theString);
-        if (theString.equals("1") && use_flower && !lottieAnimationView.isAnimating()) {
-            lottieAnimationView.resumeAnimation();
-        }
-
-        if (theString.equals("2") && use_flower && lottieAnimationView.isAnimating()) {
-            lottieAnimationView.pauseAnimation();
-        }
-
+        Log.i("recieved------------:", theString);
         if (theString.equals("3")) {
-            use_flower = !use_flower;
-            if (use_flower) {
-                showAnimationButNotPlay("flower_image", "flower.json", -1);
+
+            use_wave = !use_wave;
+            lottieAnimationView.cancelAnimation();
+            if (!use_wave) {
+                showAnimation("firefly_in", "firefly_in.json", 0);
             } else {
-                showAnimation("rain_image", "rain.json", -1);
-                if (mManager == null) {
-                    mManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-                    mManager.registerListener(this, mManager.getDefaultSensor(Sensor.TYPE_PROXIMITY),
-                            SensorManager.SENSOR_DELAY_NORMAL);
-                }
+                showAnimation("wave_whole_image", "wave_whole_image.json", 0);
             }
         }
 
-    }
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        float[] its = event.values;
-
-        Log.d("|---> ","sensor type :" + event.sensor.getType() + " proximity type:" + Sensor.TYPE_PROXIMITY);
-        if (its != null && event.sensor.getType() == Sensor.TYPE_PROXIMITY && !use_flower) {
-            //经过测试，当手贴近距离感应器的时候its[0]返回值为0.0，当手离开时返回1.0
-            Log.e("| ----> ", "sensor value is: " + its[0]);
-            float value = its[0];
-            if (value == 0.0) {
-                lottieAnimationView.cancelAnimation();
-                serialSend("2");
-            } else {
-                if (!lottieAnimationView.isAnimating()) {
-                    lottieAnimationView.playAnimation();
-                    serialSend("5");
-                }
-            }
+        if (theString.equals("1") && !use_wave) {
+            showAnimation("firefly_in", "firefly_in.json", 0);
         }
-    }
 
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // TODO 自动生成的方法存根
     }
 
     public void connectToBluno() {
@@ -127,6 +109,17 @@ public class CanvasActivity extends BlunoLibrary implements SensorEventListener 
         switch (theConnectionState) {											//Four connection state
             case isConnected:
                 Log.e("BBB:", "connected!");
+                hasConnected = true;
+                Intent intent = getIntent();
+                int noiseValue = 70;
+                try {
+                    noiseValue = Integer.parseInt(intent.getStringExtra("noise_value"));
+                } catch (NumberFormatException e) {
+                    Toast.makeText(CanvasActivity.this, "this is not a number, will use 70", Toast.LENGTH_LONG).show();
+                }
+
+                audioRecordDemo = new AudioRecordDemo(noiseValue, 5, mainHandler);
+                audioRecordDemo.getNoiseLevel();
                 break;
             case isConnecting:
                 hasConnected = false;
@@ -148,7 +141,6 @@ public class CanvasActivity extends BlunoLibrary implements SensorEventListener 
                 break;
         }
     }
-
 
     /**
      * 设置隐藏标题栏
@@ -180,6 +172,10 @@ public class CanvasActivity extends BlunoLibrary implements SensorEventListener 
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
+    public void startAudioRecording() {
+        audioRecordDemo = new AudioRecordDemo(70, 5, mainHandler);
+        audioRecordDemo.getNoiseLevel();
+    }
 
     /**
      * 隐藏虚拟按键，并且全屏
@@ -270,10 +266,7 @@ public class CanvasActivity extends BlunoLibrary implements SensorEventListener 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        onDestroyProcess();
-        if(mManager != null){
-            mManager.unregisterListener(this);//注销传感器监听
-        }//onDestroy Process by BlunoLibrary
+        onDestroyProcess();														//onDestroy Process by BlunoLibrary
     }
 
     private void setScreenOn() {
@@ -287,10 +280,34 @@ public class CanvasActivity extends BlunoLibrary implements SensorEventListener 
         lottieAnimationView.playAnimation();
     }
 
-    private void showAnimationButNotPlay(String imageFolder, String jsonFile, int repeatCount) {
-        lottieAnimationView.setRepeatCount(repeatCount);
-        lottieAnimationView.setImageAssetsFolder(imageFolder);
-        lottieAnimationView.setAnimation(jsonFile, LottieAnimationView.CacheStrategy.Strong);
+    private void showFirefly(fireflyStatus status, int repeatCount) {
+        if (use_wave) {
+            return;
+        }
+
+        switch (status) {
+            case still:
+                showAnimation("firefly_still_image", "firefly_still_data.json", repeatCount);
+                break;
+            case whole:
+                showAnimation("firefly_whole_image", "firefly_whole_data.json", repeatCount);
+                break;
+            default:
+                showAnimation("firefly_still_image", "firefly_still_data.json", repeatCount);
+        }
+    }
+
+    private void setTouchListener() {
+        lottieAnimationView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.w(">>> touch me: ", "has been touched!");
+                if (!lottieAnimationView.isAnimating() && use_wave) {
+                    showAnimation("wave_whole_image", "wave_whole_image.json", 0);
+                    serialSend("4");
+                }
+            }
+        });
     }
 
 }

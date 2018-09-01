@@ -60,10 +60,10 @@ public class AudioRecordDemo {
                     // 平方和除以数据总长度，得到音量大小。
                     double mean = v / (double) r;
                     double volume = 10 * Math.log10(mean);
-                    Log.d(TAG, "分贝值:" + volume);
 
                     // 如果声音大到临界值，切换图片显示，开始计时
                     if (volume > volumeEdge) {
+                        Log.d(TAG, "分贝值:" + volume);
                         isGifPlayEnd = false;
                         startCount = true;
                         Log.d(TAG, "开始计时:" + volume);
