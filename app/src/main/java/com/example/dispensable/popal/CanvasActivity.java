@@ -58,9 +58,9 @@ public class CanvasActivity extends BlunoLibrary implements SensorEventListener 
             mManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
             mManager.registerListener(this, mManager.getDefaultSensor(Sensor.TYPE_PROXIMITY),
                     SensorManager.SENSOR_DELAY_NORMAL);
-            showAnimation("firefly_whole_image", "firefly_whole_data.json", -1);
+            showAnimation("flower_image", "flower.json", -1);
         } else {
-            showAnimationButNotPlay("firefly_whole_image", "firefly_whole_data.json", -1);
+            showAnimationButNotPlay("rain_image", "rain.json", -1);
         }
     }
 
@@ -79,9 +79,9 @@ public class CanvasActivity extends BlunoLibrary implements SensorEventListener 
         if (theString.equals("3")) {
             use_flower = !use_flower;
             if (use_flower) {
-                showAnimationButNotPlay("firefly_whole_image", "firefly_whole_data.json", -1);
+                showAnimationButNotPlay("flower_image", "flower.json", -1);
             } else {
-                showAnimation("firefly_whole_image", "firefly_whole_data.json", -1);
+                showAnimation("rain_image", "rain.json", -1);
                 if (mManager == null) {
                     mManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
                     mManager.registerListener(this, mManager.getDefaultSensor(Sensor.TYPE_PROXIMITY),
