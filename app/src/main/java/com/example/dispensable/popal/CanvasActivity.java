@@ -283,14 +283,14 @@ public class CanvasActivity extends BlunoLibrary implements SensorEventListener 
     private void showAnimation(String imageFolder, String jsonFile, int repeatCount) {
         lottieAnimationView.setRepeatCount(repeatCount);
         lottieAnimationView.setImageAssetsFolder(imageFolder);
-        lottieAnimationView.setAnimation(jsonFile, LottieAnimationView.CacheStrategy.Strong);
+        lottieAnimationView.setAnimation(jsonFile, LottieAnimationView.CacheStrategy.Weak);
         lottieAnimationView.playAnimation();
     }
 
     private void showAnimationButNotPlay(String imageFolder, String jsonFile, int repeatCount) {
         lottieAnimationView.setRepeatCount(repeatCount);
         lottieAnimationView.setImageAssetsFolder(imageFolder);
-        lottieAnimationView.setAnimation(jsonFile, LottieAnimationView.CacheStrategy.Strong);
+        lottieAnimationView.setAnimation(jsonFile, LottieAnimationView.CacheStrategy.Weak);
     }
 
 }
